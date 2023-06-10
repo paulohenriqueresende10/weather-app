@@ -1,3 +1,6 @@
+import { API_ROUTES } from "./constants/api.js";
+import { env } from "../env.js";
+
 const container = document.querySelector('.container');
 const search = document.querySelector('.search-box button');
 const weatherBox = document.querySelector('.weather-box');
@@ -7,14 +10,13 @@ const error404Text = document.querySelector('.not-found p');
 const inputText = document.querySelector('.search-box input');
 
 search.addEventListener('click', async () => {
-    const APIKey = 'bd5e378503939ddaee76f12ad7a97608';
     const city = document.querySelector('.search-box input').value;
 
     if (!city) {
         return;
     }
 
-    const response = await fetchWeather(APIKey, city);
+    const response = await fetchWeather(env.api_key, city);
 
     const checkHttpCode = await checkApiResponseHttpCode(response);
 
@@ -31,7 +33,7 @@ inputText.addEventListener('keypress', (event) => {
 });
 
 const fetchWeather = async (APIKey, city) => {
- const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${APIKey}`)
+ const response = await fetch(API_ROUTES.baseUrl(APIKey, city))
     .then(response => response.json());
     return response;
 };
