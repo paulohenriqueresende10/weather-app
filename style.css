@@ -182,3 +182,7 @@ body{
         opacity: 1;
     }
 }
+
+.not-found p::first-letter {
+    text-transform: capitalize;
+}
