@@ -33,7 +33,7 @@ inputText.addEventListener('keypress', (event) => {
 });
 
 const fetchWeather = async (APIKey, city) => {
- const response = await fetch(API_ROUTES.baseUrl(APIKey, city))
+ const response = await fetch(API_ROUTES.baseUrlWeather(APIKey, city))
     .then(response => response.json());
     return response;
 };
@@ -101,3 +101,25 @@ const checkApiResponseHttpCode = async ({cod, message}) => {
     error404.classList.remove('fadeIn');
     return true;
 };
+
+const fetchcities = async () => {
+    const response = await fetch(API_ROUTES.baseUrlCities())
+        .then(response => response.json());
+    return response;
+};
+
+const renderCitiesOptions = async (cities) => {
+    const datalistOption = document.querySelector('#cityname');
+    cities.forEach(city => {
+        const options = document.createElement('option');
+        options.value = city.nome;
+        datalistOption.append(options);
+    });
+};
+
+const handleDatalistOptions = async () => {
+    const response = await fetchcities();
+    await renderCitiesOptions(response);
+};
+
+handleDatalistOptions();

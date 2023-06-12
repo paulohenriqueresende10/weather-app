@@ -18,7 +18,8 @@
     <div class="container">
         <div class="search-box">
             <i class="fa-solid fa-location-dot"></i>
-            <input type="text" placeholder="Enter your location">
+            <input type="text" placeholder="Enter your location" name="city" list="cityname">
+            <datalist id="cityname"></datalist>
             <button class="fa-solid fa-magnifying-glass"></button>
         </div>
 
@@ -53,6 +54,7 @@
     </div>
 
     <script src="https://kit.fontawesome.com/7c8801c017.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script type="module" src="index.js"></script>
 </body>
 
