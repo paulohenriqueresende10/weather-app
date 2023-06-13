@@ -70,6 +70,7 @@ body{
     position: absolute;
     color: #06283D;
     font-size: 28px;
+    cursor: pointer;
 }
 
 .weather-box{

@@ -8,6 +8,7 @@ const weatherDetails = document.querySelector('.weather-details');
 const error404 = document.querySelector('.not-found');
 const error404Text = document.querySelector('.not-found p');
 const inputText = document.querySelector('.search-box input');
+const inputIcon = document.querySelector('.search-box i');
 
 search.addEventListener('click', async () => {
     const city = document.querySelector('.search-box input').value;
@@ -16,7 +17,7 @@ search.addEventListener('click', async () => {
         return;
     }
 
-    const response = await fetchWeather(env.api_key, city);
+    const response = await fetchWeather(env.api_key, `q=${city}`);
 
     const checkHttpCode = await checkApiResponseHttpCode(response);
 
@@ -26,16 +27,19 @@ search.addEventListener('click', async () => {
 });
 
 inputText.addEventListener('keypress', (event) => {
+    const inputValue = event.target.value;
     if (event.key === "Enter") {
         event.preventDefault();
         search.click();
-      }
+    }
+    if (inputValue.length >= 3) {
+        handleDatalistOptions(inputValue);
+    }
 });
 
-const fetchWeather = async (APIKey, city) => {
- const response = await fetch(API_ROUTES.baseUrlWeather(APIKey, city))
-    .then(response => response.json());
-    return response;
+const fetchWeather = async (APIKey, apiParam) => {
+    const response = await axios.get(API_ROUTES.baseUrlWeather(APIKey, apiParam));
+    return response.data;
 };
 
 const renderApiResponse = (json) => {
@@ -103,9 +107,8 @@ const checkApiResponseHttpCode = async ({cod, message}) => {
 };
 
 const fetchcities = async () => {
-    const response = await fetch(API_ROUTES.baseUrlCities())
-        .then(response => response.json());
-    return response;
+    const response = await axios.get(API_ROUTES.baseUrlCities());
+    return response.data;
 };
 
 const renderCitiesOptions = async (cities) => {
@@ -117,9 +120,25 @@ const renderCitiesOptions = async (cities) => {
     });
 };
 
-const handleDatalistOptions = async () => {
-    const response = await fetchcities();
-    await renderCitiesOptions(response);
+const handleDatalistOptions = async (cityFilter) => {
+    const CitiesOptions = await fetchcities();
+    const newCities = CitiesOptions.filter((city) => 
+        city.nome.toLowerCase().includes(cityFilter)
+    );
+    await renderCitiesOptions(newCities);
 };
 
-handleDatalistOptions();
+const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition);
+    }
+};
+
+const showPosition = async (position) => {
+    const response = await fetchWeather(env.api_key, `lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+    renderApiResponse(response);
+};
+
+inputIcon.addEventListener('click', async () => {
+    getLocation();
+});
