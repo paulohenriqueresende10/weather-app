@@ -19,9 +19,7 @@ search.addEventListener('click', async () => {
 
     const response = await fetchWeather(env.api_key, `q=${city}`);
 
-    const checkHttpCode = await checkApiResponseHttpCode(response);
-
-    if (checkHttpCode) {
+    if (response) {
         renderApiResponse(response);
     }
 });
@@ -38,7 +36,21 @@ inputText.addEventListener('keypress', (event) => {
 });
 
 const fetchWeather = async (APIKey, apiParam) => {
-    const response = await axios.get(API_ROUTES.baseUrlWeather(APIKey, apiParam));
+    const response = await axios.get(API_ROUTES.baseUrlWeather(APIKey, apiParam))
+    .catch((error) => {
+        container.style.height = '400px';
+        weatherBox.style.display = 'none';
+        weatherDetails.style.display = 'none';
+        error404.style.display = 'block';
+        error404.classList.add('fadeIn');
+        error404Text.innerText = error.response.data.message;
+        return false;
+    });
+    if(!response) {
+        return response;
+    }
+    error404.style.display = 'none';
+    error404.classList.remove('fadeIn');
     return response.data;
 };
 
@@ -88,22 +100,6 @@ const selectWeatherImage = (weatherMain, image) => {
         default:
             image.src = '';
     }
-};
-
-const checkApiResponseHttpCode = async ({cod, message}) => {
-    if (cod === '404') {
-        container.style.height = '400px';
-        weatherBox.style.display = 'none';
-        weatherDetails.style.display = 'none';
-        error404.style.display = 'block';
-        error404.classList.add('fadeIn');
-        error404Text.innerText = message;
-        return false;
-    }
-
-    error404.style.display = 'none';
-    error404.classList.remove('fadeIn');
-    return true;
 };
 
 const fetchcities = async () => {
